@@ -1,12 +1,17 @@
 name: check-pr-size
 on: [pull_request]
+
 jobs:
-  linter_name:
-    name: runner / check-pr-size
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: budougumi0617/action-pr-size-checker@v0
-        with:
-          github_token: ${{ secrets.github_token }}
-          max_added_count: 4
-          filter_pattern: "go.mod|go.sum|.*_test.go|.*.md|.*.golden|.*.yml"
+    - uses: actions/checkout@v4
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+    # ---------- this runs sizewatcher ------------
+    - run: npx @adobe/sizewatcher
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
